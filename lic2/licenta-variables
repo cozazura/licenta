@@ -76,5 +76,5 @@ export net_init_file
 ntp_string="0.pool.ntp.org,1.pool.ntp.org"
 export ntp_string
 
-whiptail_title="Security Onion Setup - $SOVERSION"
+whiptail_title="SOC_Licenta Setup"
 export whiptail_title

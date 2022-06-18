@@ -16,29 +16,30 @@ echo "Getting started..."
 
 # Source the generic function libraries that are also used by the product after
 # setup. These functions are intended to be reusable outside of the setup process.
-source ../salt/common/tools/sbin/so-common
-source ../salt/common/tools/sbin/so-image-common
+#source ../salt/common/tools/sbin/so-common
+#source ../salt/common/tools/sbin/so-image-common
 
 # Setup bash functionality is divided into functions and user-facing prompts. 
 # Do not attempt to re-use any of this functionality outside of setup. Instead, 
 # if needed, migrated generic functions into so-common.
-source ./so-functions
-source ./so-whiptail
+source ./licenta-functions
+source ./licenta-whiptail
 
 # Finally, source the default variable definitions, which require availability of
 # functions sourced above.
-source ./so-variables
+source ./licenta-variables
 
-
-parse_install_username
-detect_os 
-#intrebam daca utilizatorul este sigur
+#intrebam daca utilizatorul este sigur ca vrea sa instaleze aplicatia
 if (whiptail_you_sure); then
 	true
 else
-	echo "User cancelled setup." | tee -a "$setup_log"
+	echo "Ati anulat Setup-ul." | tee -a "$setup_log"
 	whiptail_cancel
 fi
+
+parse_install_username
+detect_os 
+
 ##procesul de instalare
 setup_proc="$$"
 #preflight check
