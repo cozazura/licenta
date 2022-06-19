@@ -41,6 +41,15 @@ detect_os
 
 parse_install_username
 
+progress() {
+	local msg=${1:-'Please wait while installing...'}
+
+	if [ $automated == no ]; then
+		whiptail --title "$whiptail_title" --gauge "$msg" 6 70 0 # append to text
+	else
+		cat >> $setup_log 2>&1
+	fi		
+}
 
 ##procesul de instalare
 setup_proc="$$"
