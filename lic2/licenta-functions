@@ -1117,30 +1117,19 @@ installer_progress_loop() {
 }
 
 installer_prereq_packages() {
-	if [ "$OS" == centos ]; then
-		if [[ ! $is_iso ]]; then
-			if ! yum versionlock > /dev/null 2>&1; then
-				yum -y install yum-plugin-versionlock >> "$setup_log" 2>&1
-			fi
-			if ! command -v nmcli > /dev/null 2>&1; then
-				yum -y install NetworkManager >> "$setup_log" 2>&1
-			fi
-		fi
-		logCmd "systemctl enable NetworkManager"
-		logCmd "systemctl start NetworkManager"
-	elif [ "$OS" == ubuntu ]; then
-		# Print message to stdout so the user knows setup is doing something
-		retry 50 10 "apt-get update" >> "$setup_log" 2>&1 || exit 1
-		# Install network manager so we can do interface stuff
-		if ! command -v nmcli > /dev/null 2>&1; then
-			retry 50 10 "apt-get -y install network-manager" >> "$setup_log" 2>&1 || exit 1
-			{
-				systemctl enable NetworkManager
-				systemctl start NetworkManager
-			} >> "$setup_log" 2<&1
-		fi
-		retry 50 10 "apt-get -y install curl"  >> "$setup_log" 2>&1 || exit 1
+if [ "$OS" == ubuntu ]; then
+	# Print message to stdout so the user knows setup is doing something
+	retry 50 10 "apt-get update" >> "$setup_log" 2>&1 || exit 1
+	# Install network manager so we can do interface stuff
+	if ! command -v nmcli > /dev/null 2>&1; then
+		retry 50 10 "apt-get -y install network-manager" >> "$setup_log" 2>&1 || exit 1
+		{
+			systemctl enable NetworkManager
+			systemctl start NetworkManager
+		} >> "$setup_log" 2<&1
 	fi
+	retry 50 10 "apt-get -y install curl"  >> "$setup_log" 2>&1 || exit 1
+fi
 }
 
 disable_auto_start() {

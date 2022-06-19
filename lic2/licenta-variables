@@ -20,10 +20,10 @@ export random_uid
 node_es_port=9200
 export node_es_port
 
-setup_log="/root/sosetup.log"
+setup_log="/root/licenta_setup.log"
 export setup_log
 
-error_log="/root/errors.log"
+error_log="/root/licenta_errors.log"
 export error_log
 
 filesystem_root=$(df / | awk '$3 ~ /[0-9]+/ { print $2 * 1000 }')
