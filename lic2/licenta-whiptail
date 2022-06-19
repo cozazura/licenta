@@ -382,33 +382,17 @@ whiptail_enable_components() {
 
 	[ -n "$TESTING" ] && return
 
-	GRAFANA=0
-	OSQUERY=0
-	WAZUH=0
+    MISP=0
 	THEHIVE=0
-	PLAYBOOK=0
-	STRELKA=0
 
-description="Choose optional services to be enabled for this installation. Be aware that the more services you enable the more RAM that is required."
-if [[ $is_eval ]]; then
+
+description="Activati componentele dorite. Acestea vor creste necesarul de memorie RAM."
+
 	COMPONENTS=$(whiptail --title "$whiptail_title" --checklist \
 	"$description" 20 75 8 \
-	GRAFANA "Enable Grafana for system monitoring" ON \
-	OSQUERY "Enable Fleet with osquery" ON \
-	WAZUH "Enable Wazuh" ON \
-	THEHIVE "Enable TheHive" ON \
-	PLAYBOOK "Enable Playbook" ON \
-	STRELKA "Enable Strelka" ON 3>&1 1>&2 2>&3)
-else
-	COMPONENTS=$(whiptail --title "$whiptail_title" --checklist \
-	"$description" 20 75 7 \
-	OSQUERY "Enable Fleet with osquery" ON \
-	WAZUH "Enable Wazuh" ON \
-	THEHIVE "Enable TheHive" ON \
-	PLAYBOOK "Enable Playbook" ON \
-	STRELKA "Enable Strelka" ON 3>&1 1>&2 2>&3)
-	export "GRAFANA=1"
-fi
+	
+    MISP "Activati MISP pentru sharing-ul de alerte" ON \
+	THEHIVE "Enable TheHive" ON 3>&1 1>&2 2>&3)
 
 	local exitstatus=$?
 	whiptail_check_exitstatus $exitstatus
@@ -422,7 +406,34 @@ fi
     	export "$component=1"
 	done
 }
+whiptail_choose_database() {
 
+	[ -n "$TESTING" ] && return
+
+	ELASTICSEARCH=0
+	LUCENE=0
+
+
+description="Alegeti tipul de baza de date dorit."
+
+	DATABASES=$(whiptail --title "$whiptail_title" --radiolist \
+	"$description" 20 75 8 \
+	ELASTICSEARCH "Activati ELASTICSEARCH " ON \
+	LUCENE "Activati LUCENE. Este o baza de date locala " ON 3>&1 1>&2 2>&3)
+
+
+	local exitstatus=$?
+	whiptail_check_exitstatus $exitstatus
+
+	DATABASES=$(echo "$DATABASES" | tr -d '"')
+
+	IFS=' ' read -ra DATABASES <<< "$DATABASES"
+
+	# Set any variables to 1 if they exist in COMPONENTS
+	for database in "${DATABASES[@]}"; do
+    	export "$database=1"
+	done
+}
 whiptail_end_settings() {
 	[ -n "$TESTING" ] && return
 
@@ -1925,10 +1936,11 @@ whiptail_you_sure() {
 	read -r -d '' you_sure_text <<- EOM
 		Bine ati venit la SOC_Licenta Setup!
 
-		Setup foloseste sagetile de la tastatura pentru a naviga. Anumite ecrane vor furniza o lista si vi se va cere selectarea unuia sau mai multor elemente din acea lista . Puteti folosi [SPACE] pentru a selecta elementele si [ENTER] pentru a trece la urmatorul ecran.
+		Setup foloseste sagetile de la tastatura pentru a naviga. Anumite ecrane vor furniza o lista si vi se va cere selectarea unuia sau mai multor elemente din acea lista . 
+        Puteti folosi [SPACE] pentru a selecta elementele si [ENTER] pentru a trece la urmatorul ecran.
 
         ATENTIE : Aceasta aplicatie functioneaza doar pentru masinile ce ruleaza UBUNTU
-        
+
 		Doriti sa continuati?
 	EOM
 
