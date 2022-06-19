@@ -37,8 +37,10 @@ else
 	whiptail_cancel
 fi
 
-parse_install_username
 detect_os 
+
+parse_install_username
+
 
 ##procesul de instalare
 setup_proc="$$"
@@ -59,5 +61,17 @@ percentage=0
 #intrebam ce doreste sa instaleze 
 
 whiptail_enable_components
+whiptail_choose_database
 collect_webuser_inputs
 
+
+# Begin install
+{
+	# Set initial percentage to 0
+	export percentage=0
+
+	# Show initial progress message
+	set_progress_str 0 'Running initial configuration steps'
+
+	
+} | progress
