@@ -733,7 +733,7 @@ updatePassword() {
   fi
 }
 validatePassword() {
-  password=$1
+  password=$WEBPASSWD1
 
   len=$(expr length "$password")
   if [[ $len -lt 8 ]]; then
