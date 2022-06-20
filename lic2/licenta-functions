@@ -752,7 +752,7 @@ collect_webuser_inputs() {
 		whiptail_invalid_user_warning
 		whiptail_create_web_user "$WEBUSER"
 	done
-
+	export WEBUSER
 	WPMATCH=no
 	while [[ $WPMATCH != yes ]]; do
 		whiptail_create_web_user_password1
@@ -766,7 +766,9 @@ collect_webuser_inputs() {
 		else
 			whiptail_invalid_pass_warning
 		fi
+
 	done
+	export WEBPASSWD1
 }
 
 collect_zeek() {
