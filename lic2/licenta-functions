@@ -707,7 +707,43 @@ validateEmail() {
     fail "Email addresses cannot contain uppercase letters"
   fi
 }
+updatePassword() {
+  identityId=$1
+  
+  if [ -z "$password" ]; then
+    # Read password from stdin (show prompt only if no stdin was piped in)
+    test -t 0
+    if [[ $? == 0 ]]; then
+      echo "Enter new password:"
+    fi
+    read -rs password
 
+    validatePassword "$password"
+  fi
+
+  if [[ -n "$identityId" ]]; then
+    # Generate password hash
+    passwordHash=$(hashPassword "$password")
+    # Update DB with new hash
+    echo "update identity_credentials set config=CAST('{\"hashed_password\":\"$passwordHash\"}' as BLOB), updated_at=datetime('now') where identity_id='${identityId}' and identity_credential_type_id=(select id from identity_credential_types where name='password');" | sqlite3 -cmd ".timeout ${databaseTimeout}" "$databasePath"
+    # Deactivate MFA
+    echo "delete from identity_credential_identifiers where identity_credential_id=(select id from identity_credentials where identity_id='${identityId}' and identity_credential_type_id=(select id from identity_credential_types where name='totp'));" | sqlite3 -cmd ".timeout ${databaseTimeout}" "$databasePath"
+    echo "delete from identity_credentials where identity_id='${identityId}' and identity_credential_type_id=(select id from identity_credential_types where name='totp');" | sqlite3 -cmd ".timeout ${databaseTimeout}" "$databasePath"
+    [[ $? != 0 ]] && fail "Unable to update password"
+  fi
+}
+validatePassword() {
+  password=$1
+
+  len=$(expr length "$password")
+  if [[ $len -lt 8 ]]; then
+    fail "Password does not meet the minimum requirements"
+  fi
+  if [[ $len -gt 72 ]]; then
+    fail "Password is too long (max: 72)"
+  fi
+  check_password_and_exit "$password"
+}
 # Get an email & password for the web admin user
 collect_webuser_inputs() {
 	whiptail_create_web_user
@@ -720,7 +756,7 @@ collect_webuser_inputs() {
 	WPMATCH=no
 	while [[ $WPMATCH != yes ]]; do
 		whiptail_create_web_user_password1
-		while ! check_password "$WEBPASSWD1"; do
+		while ! validatePassword "$WEBPASSWD1"; do
 			whiptail_invalid_pass_characters_warning
 			whiptail_create_web_user_password1
 		done
