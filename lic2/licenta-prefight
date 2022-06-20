@@ -116,15 +116,9 @@ check_misc_urls() {
 		printf '%s' "$misc_url_str" | tee -a "$preflight_log"
 	fi
 
-	local so_version
-	so_version=$(cat ../VERSION)
+	
 	local url_arr=(
-		"https://raw.githubusercontent.com/Security-Onion-Solutions/securityonion/master/KEYS"
-		"https://github.com/Neo23x0/signature-base"
-		"https://sigs.securityonion.net/$so_version/securityonion-$so_version.iso.sig"
-		"https://ghcr.io/"
-		"https://rules.emergingthreats.net/open/"
-		"https://rules.emergingthreatspro.com/"
+		
 	)
 
 	__check_url_arr "${url_arr[@]}"

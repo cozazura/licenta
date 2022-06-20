@@ -359,26 +359,7 @@ collect_fleet_custom_hostname_inputs() {
 	done
 }
 
-# Get a username & password for the Fleet admin user
-collect_fleetuser_inputs() {
-	whiptail_create_fleet_node_user
-	
-	while ! so-user valemail "$FLEETNODEUSER" >> "$setup_log" 2>&1; do
-		whiptail_invalid_user_warning
-		whiptail_create_fleet_node_user "$FLEETNODEUSER"
-	done
 
-	FPMATCH=no
-	while [[ $FPMATCH != yes ]]; do
-		whiptail_create_fleet_node_user_password1
-		while ! check_password "$FLEETNODEPASSWD1"; do
-			whiptail_invalid_pass_characters_warning
-			whiptail_create_fleet_node_user_password1
-		done
-		whiptail_create_fleet_node_user_password2
-		check_fleet_node_pass
-	done
-}
 
 collect_gateway() {
 	whiptail_management_interface_gateway
@@ -1121,7 +1102,9 @@ if [ "$OS" == ubuntu ]; then
 	# Print message to stdout so the user knows setup is doing something
 	retry 50 10 "apt-get update" >> "$setup_log" 2>&1 || exit 1
 	# Install network manager so we can do interface stuff
+	set_progress_str 25
 	if ! command -v nmcli > /dev/null 2>&1; then
+		set_progress_str 40
 		retry 50 10 "apt-get -y install network-manager" >> "$setup_log" 2>&1 || exit 1
 		{
 			systemctl enable NetworkManager
@@ -1132,6 +1115,7 @@ if [ "$OS" == ubuntu ]; then
     if type -p java; then
         echo found java executable in PATH
         _java=java
+		set_progress_str 70
     elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
         echo found java executable in JAVA_HOME     
         _java="$JAVA_HOME/bin/java"
@@ -1145,6 +1129,7 @@ if [ "$OS" == ubuntu ]; then
     if [[ "$_java" ]]; then
         version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}')
         echo version "$version"
+		set_progress_str 90
         if [[ "$version" < "11.0.0" ]]; then
             sudo apt-get install openjdk-11-jdk
             export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64" 
@@ -1152,7 +1137,7 @@ if [ "$OS" == ubuntu ]; then
             export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin 
         fi
     fi
-    
+    set_progress_str 99
 	retry 50 10 "apt-get -y install curl"  >> "$setup_log" 2>&1 || exit 1
 fi
 }
