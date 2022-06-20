@@ -760,7 +760,7 @@ collect_webuser_inputs() {
 			whiptail_invalid_pass_characters_warning
 			whiptail_create_web_user_password1
 		done
-		if echo "$WEBPASSWD1" | so-user valpass >> "$setup_log" 2>&1; then
+		if echo "$WEBPASSWD1" | validatePassword >> "$setup_log" 2>&1; then
 			whiptail_create_web_user_password2
 			check_web_pass
 		else
