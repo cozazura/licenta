@@ -384,6 +384,7 @@ whiptail_enable_components() {
 
     MISP=0
 	THEHIVE=0
+	CORTEX=0
 
 
 description="Activati componentele dorite. Acestea vor creste necesarul de memorie RAM."
@@ -392,7 +393,8 @@ description="Activati componentele dorite. Acestea vor creste necesarul de memor
 	"$description" 20 75 8 \
 	
     MISP "Activati MISP pentru sharing-ul de alerte" ON \
-	THEHIVE "Enable TheHive" ON 3>&1 1>&2 2>&3)
+	CORTEX "Activati cortex" ON \
+	THEHIVE "Activati TheHive" ON 3>&1 1>&2 2>&3)
 
 	local exitstatus=$?
 	whiptail_check_exitstatus $exitstatus

@@ -67,7 +67,7 @@ percentage=0
 #intrebam ce doreste sa instaleze 
 
 whiptail_enable_components
-whiptail_choose_database
+#whiptail_choose_database
 collect_webuser_inputs
 
 
