@@ -53,7 +53,7 @@ setup_proc="$$"
 #preflight check
 percentage=0
 {
-	installer_progress_loop 'verificam daca pachetele necesare suntinstalate...' & # Run progress bar to 98 in ~8 minutes while waiting for package installs
+	installer_progress_loop 'verificam daca pachetele necesare sunt instalate...' & # Run progress bar to 98 in ~8 minutes while waiting for package installs
 	progress_bg_proc=$!
 	installer_prereq_packages
 	install_success=$?
@@ -66,23 +66,8 @@ percentage=0
 } | progress '...'
 
 
-#intrebam ce doreste sa instaleze 
-	MISP=0
-	THEHIVE=0
-	CORTEX=0
-
-
-description="Activati componentele dorite. Acestea vor creste necesarul de memorie RAM."
-
-	COMPONENTS=$(whiptail --title "$whiptail_title" --checklist \
-	"$description" 20 75 \
-	
-    MISP "Activati MISP pentru sharing-ul de alerte" ON \
-	CORTEX "Activati cortex" ON \
-	THEHIVE "Activati TheHive" ON 3>&1 1>&2 2>&3)
-
 whiptail_enable_components
-#whiptail_choose_database
+whiptail_choose_database
 collect_webuser_inputs
 
 

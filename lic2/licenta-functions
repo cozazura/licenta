@@ -1102,10 +1102,10 @@ if [ "$OS" == ubuntu ]; then
 	# Print message to stdout so the user knows setup is doing something
 	retry 50 10 "apt-get update" >> "$setup_log" 2>&1 || exit 1
 	# Install network manager so we can do interface stuff
-	set_progress_str 25
+	set_progress_str 25 "'verificam daca pachetele necesare sunt instalate...'"
 	sleep 1
 	if ! command -v nmcli > /dev/null 2>&1; then
-		set_progress_str 40
+		set_progress_str 40 'verificam daca pachetele necesare sunt instalate...'
 		sleep 1
 		retry 50 10 "apt-get -y install network-manager" >> "$setup_log" 2>&1 || exit 1
 		{
@@ -1117,7 +1117,7 @@ if [ "$OS" == ubuntu ]; then
     if type -p java; then
         echo found java executable in PATH
         _java=java
-		set_progress_str 70
+		set_progress_str 70 'verificam daca pachetele necesare sunt instalate...'
 		sleep 1
     elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
         echo found java executable in JAVA_HOME     
@@ -1132,7 +1132,7 @@ if [ "$OS" == ubuntu ]; then
     if [[ "$_java" ]]; then
         version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}')
         echo version "$version"
-		set_progress_str 90
+		set_progress_str 90 'verificam daca pachetele necesare sunt instalate...'
         if [[ "$version" < "11.0.0" ]]; then
             sudo apt-get install openjdk-11-jdk
             export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64" 
@@ -1140,9 +1140,9 @@ if [ "$OS" == ubuntu ]; then
             export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin 
         fi
     fi
-    set_progress_str 90
+    set_progress_str 90 'verificam daca pachetele necesare sunt instalate...'
 	retry 50 10 "apt-get -y install curl"  >> "$setup_log" 2>&1 || exit 1
-	set_progress_str 100
+	set_progress_str 100 'verificam daca pachetele necesare sunt instalate...'
 
 fi
 }

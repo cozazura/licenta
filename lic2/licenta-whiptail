@@ -391,7 +391,6 @@ description="Activati componentele dorite. Acestea vor creste necesarul de memor
 
 	COMPONENTS=$(whiptail --title "$whiptail_title" --checklist \
 	"$description" 20 75 7 \
-	
     MISP "Activati MISP pentru sharing-ul de alerte" ON \
 	CORTEX "Activati cortex" ON \
 	THEHIVE "Activati TheHive" ON 3>&1 1>&2 2>&3)
