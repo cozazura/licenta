@@ -390,7 +390,7 @@ whiptail_enable_components() {
 description="Activati componentele dorite. Acestea vor creste necesarul de memorie RAM."
 
 	COMPONENTS=$(whiptail --title "$whiptail_title" --checklist \
-	"$description" 20 75 8 \
+	"$description" 20 75 7 \
 	
     MISP "Activati MISP pentru sharing-ul de alerte" ON \
 	CORTEX "Activati cortex" ON \
@@ -408,6 +408,7 @@ description="Activati componentele dorite. Acestea vor creste necesarul de memor
     	export "$component=1"
 	done
 }
+
 whiptail_choose_database() {
 
 	[ -n "$TESTING" ] && return
