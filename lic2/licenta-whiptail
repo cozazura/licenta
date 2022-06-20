@@ -418,8 +418,8 @@ description="Alegeti tipul de baza de date dorit."
 
 	DATABASES=$(whiptail --title "$whiptail_title" --radiolist \
 	"$description" 20 75 8 \
-	ELASTICSEARCH "Activati ELASTICSEARCH " ON \
-	LUCENE "Activati LUCENE. Este o baza de date locala " ON 3>&1 1>&2 2>&3)
+	ELASTICSEARCH "Activati ELASTICSEARCH " OFF \
+	LUCENE "Activati LUCENE. Este o baza de date locala " OFF 3>&1 1>&2 2>&3)
 
 
 	local exitstatus=$?
