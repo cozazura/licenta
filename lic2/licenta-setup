@@ -64,8 +64,10 @@ percentage=0
 		kill -SIGUSR1 "$setup_proc"; exit 1
 	fi
 } | progress '...'
+
+
 #intrebam ce doreste sa instaleze 
-MISP=0
+	MISP=0
 	THEHIVE=0
 	CORTEX=0
 
@@ -73,7 +75,7 @@ MISP=0
 description="Activati componentele dorite. Acestea vor creste necesarul de memorie RAM."
 
 	COMPONENTS=$(whiptail --title "$whiptail_title" --checklist \
-	"$description" 20 75 7 \
+	"$description" 20 75 \
 	
     MISP "Activati MISP pentru sharing-ul de alerte" ON \
 	CORTEX "Activati cortex" ON \
