@@ -1143,7 +1143,7 @@ if [ "$OS" == ubuntu ]; then
     set_progress_str 90
 	retry 50 10 "apt-get -y install curl"  >> "$setup_log" 2>&1 || exit 1
 	set_progress_str 100
-	sleep 1
+
 fi
 }
 
