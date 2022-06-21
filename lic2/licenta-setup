@@ -70,14 +70,39 @@ whiptail_enable_components
 whiptail_choose_database
 collect_webuser_inputs
 
-
+echo $WEBPASSWD1
 # Begin install
 {
 	# Set initial percentage to 0
 	export percentage=0
 
 	# Show initial progress message
-	set_progress_str 0 'Running initial configuration steps'
-
-	
+	set_progress_str 0 'Se instaleaza ... Va rugam asteptati...'
+	for i in 1 2 3 4 5
+	do
+	sleep 1
+	set_progress_str i*2  'Se instaleaza ... Va rugam asteptati...'
+	done
+	set_progress_str 20 'Se instaleaza TheHive'
+	if $THEHIVE = 1
+		arr=("cassandra""elasticsearch""minio""cortex""thehive")
+		j=20
+		for i in "${arr[@]}"
+		docker-compose start $i 
+		set_progress_str $j+5
+		j=$j+5
+		sleep 1  
+		done
+	fi
+	set_progress_str 50
+	sleep 1
+	if $MISP = 1
+		set_progress_str 80 'Se instaleaza MISP'
+		docker-compose start misp
+		set_progress_str 90 'Se instaleaza MISP'
+		docker-compose start misp_mysql
+	fi
+	set_progress_str 100 'Instalarea a fost efectuata si se face un cleanup'
+	install_cleanup
+	sleep 3
 } | progress

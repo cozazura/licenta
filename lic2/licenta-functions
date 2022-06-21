@@ -752,7 +752,7 @@ collect_webuser_inputs() {
 		whiptail_invalid_user_warning
 		whiptail_create_web_user "$WEBUSER"
 	done
-	export WEBUSER
+	export WEBUSER=$WEBUSER
 	WPMATCH=no
 	while [[ $WPMATCH != yes ]]; do
 		whiptail_create_web_user_password1
@@ -768,7 +768,7 @@ collect_webuser_inputs() {
 		fi
 
 	done
-	export WEBPASSWD1
+	export WEBPASSWD1=$WEBPASSWD1
 }
 
 collect_zeek() {
@@ -1152,10 +1152,10 @@ if [ "$OS" == ubuntu ]; then
 	# Print message to stdout so the user knows setup is doing something
 	retry 50 10 "apt-get update" >> "$setup_log" 2>&1 || exit 1
 	# Install network manager so we can do interface stuff
-	set_progress_str 25 "'verificam daca pachetele necesare sunt instalate...'"
+	set_progress_str 25 "verificam daca pachetele necesare sunt instalate..."
 	sleep 1
 	if ! command -v nmcli > /dev/null 2>&1; then
-		set_progress_str 40 'verificam daca pachetele necesare sunt instalate...'
+		set_progress_str 30 'verificam daca pachetele necesare sunt instalate...'
 		sleep 1
 		retry 50 10 "apt-get -y install network-manager" >> "$setup_log" 2>&1 || exit 1
 		{
@@ -1167,7 +1167,7 @@ if [ "$OS" == ubuntu ]; then
     if type -p java; then
         echo found java executable in PATH
         _java=java
-		set_progress_str 70 'verificam daca pachetele necesare sunt instalate...'
+		set_progress_str 45 'verificam daca pachetele necesare sunt instalate...'
 		sleep 1
     elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
         echo found java executable in JAVA_HOME     
@@ -1182,7 +1182,7 @@ if [ "$OS" == ubuntu ]; then
     if [[ "$_java" ]]; then
         version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}')
         echo version "$version"
-		set_progress_str 90 'verificam daca pachetele necesare sunt instalate...'
+		set_progress_str 55 'verificam daca pachetele necesare sunt instalate...'
         if [[ "$version" < "11.0.0" ]]; then
             sudo apt-get install openjdk-11-jdk
             export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64" 
@@ -1190,11 +1190,29 @@ if [ "$OS" == ubuntu ]; then
             export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin 
         fi
     fi
+	curl https://get.docker.com | sh
+	sudo usermod -aG docker $USER
+	sudo systemctl enable docker
+	sudo systemctl start docker
+	set_progress_str 68 'verificam daca pachetele necesare sunt instalate...'
+    # verificare docker-compose
+    if type -p docker-compose; then
+        echo found docker-compose executable in PATH
+        _dockerc=docker-compose
+		set_progress_str 78 'verificam daca pachetele necesare sunt instalate...'
+		sleep 1
+    else
+        sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+    fi
+	
+
     set_progress_str 90 'verificam daca pachetele necesare sunt instalate...'
 	retry 50 10 "apt-get -y install curl"  >> "$setup_log" 2>&1 || exit 1
 	set_progress_str 100 'verificam daca pachetele necesare sunt instalate...'
-
+	
 fi
+
 }
 
 disable_auto_start() {
@@ -1567,23 +1585,7 @@ install_cleanup() {
 		rm -rf "$temp_install_dir"
 	fi
 	
-	# All cleanup prior to this statement must be compatible with automated testing. Cleanup
-	# that will disrupt automated tests should be placed beneath this statement.
-	[ -n "$TESTING" ] && return
 
-	# If Mysql is running stop it
-	if docker ps --format "{{.Names}}" 2>&1 | grep -q "so-mysql"; then
-		/usr/sbin/so-mysql-stop
-	fi
-
-	if [[ $setup_type == 'iso' ]]; then
-		info "Removing so-setup permission entry from sudoers file"
-		sed -i '/so-setup/d' /etc/sudoers
-	fi
-
-	if [[ -z $SO_ERROR ]]; then
-		echo "Setup completed at $(date)" >> "$setup_log" 2>&1
-	fi
 }
 
 import_registry_docker() {
